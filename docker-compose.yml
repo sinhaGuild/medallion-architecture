@@ -90,7 +90,7 @@ services:
         mkdir -p /home/appuser/confluent-hub-components/
         
         # Sources
-        /home/appuser/bin/confluent-hub install --no-prompt --component-dir /home/appuser/confluent-hub-components/ confluentinc/kafka-connect-jdbc:10.0.1
+        /home/appuser/bin/confluent-hub install --no-prompt --component-dir /home/appuser/confluent-hub-components/ confluentinc/kafka-connect-jdbc:latest
         /home/appuser/bin/confluent-hub install --no-prompt --component-dir /home/appuser/confluent-hub-components/ --worker-configs /dev/null confluentinc/kafka-connect-datagen:0.6.0
         /home/appuser/bin/confluent-hub install --no-prompt --component-dir /home/appuser/confluent-hub-components/ debezium/debezium-connector-mysql:1.9.3
         /home/appuser/bin/confluent-hub install --no-prompt --component-dir /home/appuser/confluent-hub-components/ debezium/debezium-connector-mongodb:1.9.3
@@ -108,8 +108,9 @@ services:
 
 # Other systems
   mongo:
-    build: ./src/mongo
-    hostname: mongo
+    #build: ./src/mongo
+    #hostname: mongo
+    image: mongo
     container_name: mongo
     ports:
       - "27017:27017"
@@ -139,7 +140,7 @@ services:
 
   mssql:
       image: mcr.microsoft.com/azure-sql-edge:latest
-      container_name: mssql-az-edge
+      container_name: mssqlserver
       ports:
         - 1433:1433
       environment:
