@@ -27,13 +27,15 @@ CREATE SINK CONNECTOR MYSQL_SINK_FINANCE_00 WITH (
     'insert.mode'        ='insert'
 );
 
-CREATE SINK CONNECTOR MONGO_SINK_FINANCE_DEMS_00 WITH (
+docker exec --tty --interactive mysql bash -c 'mysql -u root -p$MYSQL_ROOT_PASSWORD'
+
+CREATE SINK CONNECTOR MONGO_SINK_CUSTOMERS_00 WITH (
     'connector.class'='com.mongodb.kafka.connect.MongoSinkConnector',
     'tasks.max'='1',
     'connection.uri'='mongodb://mongo:mongo@mongo:27017',
     'database'='Kafka',
-    'collection'='dem_contributions',
-    'topics'='DEM_CONTRIBUTIONS'
+    'collection'='customers',
+    'topics'='mysql.demo.customers'
 );
 
 CREATE SINK CONNECTOR MONGO_SINK_FINANCE_REPS_01 WITH (
@@ -45,6 +47,15 @@ CREATE SINK CONNECTOR MONGO_SINK_FINANCE_REPS_01 WITH (
     'topics'='REP_CONTRIBUTIONS'
 );
 
+CREATE SOURCE CONNECTOR MONGO_SOURCE_CUSTOMERS WITH (
+    'connector.class'='com.mongodb.kafka.connect.MongoSourceConnector',
+    'connection.uri'='mongodb://mongo:mongo@mongo:27017',
+    'database'='base',
+    'collection'='customers',
+    'topic.prefix'='mongo-',
+    'copy.existing'='true'
+);
+
 CREATE SOURCE CONNECTOR DBZM_SOURCE_MYSQL_00 WITH (
     'connector.class' = 'io.debezium.connector.mysql.MySqlConnector',
     'database.hostname' = 'mysql',
@@ -53,9 +64,24 @@ CREATE SOURCE CONNECTOR DBZM_SOURCE_MYSQL_00 WITH (
     'database.password' = 'dbz',
     'key.converter'= 'org.apache.kafka.connect.storage.StringConverter',
     'value.converter'= 'io.confluent.connect.avro.AvroConverter',
-    'value.converter.schema.registry.url'= 'http://schema-registry:8081'
+    'value.converter.schema.registry.url'= 'http://schema-registry:8081',
     'database.server.id' = '426',
     'database.server.name' = 'demo',
     'database.history.kafka.bootstrap.servers' = 'broker:29092',
     'database.history.kafka.topic' = 'dbhistory.demo' ,
+    );
+
+CREATE SOURCE CONNECTOR DBZM_SOURCE_MYSQL_CUSTOMERS WITH (
+    'connector.class' = 'io.debezium.connector.mysql.MySqlConnector',
+    'database.hostname' = 'mysql',
+    'database.port' = '3306',
+    'database.user' = 'debezium',
+    'database.password' = 'dbz',
+    'database.server.id' = '799',
+    'database.server.name' = 'mysql',
+    'table.whitelist' = 'demo.customers',
+    'database.history.kafka.bootstrap.servers' = 'broker:29092',
+    'database.history.kafka.topic' = 'dbhistory.demo' ,
+    'value.converter'= 'io.confluent.connect.avro.AvroConverter',
+    'value.converter.schema.registry.url'= 'http://schema-registry:8081'
     );
