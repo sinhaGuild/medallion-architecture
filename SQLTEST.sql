@@ -1,5 +1,18 @@
-SHOW DATABASES;
+SELECT name, database_id, create_date  
+FROM sys.databases;  
 
-USE information_schema;
+CREATE DATABASE kafka;
 
-SHOW TABLES;
+USE kafka;
+
+CREATE TABLE kafka.PurchaseOrderDetail  
+(  
+    PurchaseOrderID int NOT NULL  
+    ,LineNumber smallint NOT NULL  
+    ,ProductID int NULL  
+    ,UnitPrice money NULL  
+    ,OrderQty smallint NULL  
+    ,ReceivedQty float NULL  
+    ,RejectedQty float NULL  
+    ,DueDate datetime NULL  
+);
