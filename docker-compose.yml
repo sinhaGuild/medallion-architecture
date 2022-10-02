@@ -120,6 +120,7 @@ services:
     volumes:
       - ./mongo/data/db:/data/db
       - mongo-db:/data/db:rw
+      - ./data/mongo:/docker-entrypoint-initdb.d/:ro
 
   mysql:
     # *-----------------------------*
